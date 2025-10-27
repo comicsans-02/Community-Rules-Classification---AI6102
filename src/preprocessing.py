@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from typing import List, Optional
 from sklearn.model_selection import train_test_split
+from cleantext import clean
 
 def clean_text(text: Optional[str]) -> str:
     """
@@ -15,6 +16,28 @@ def clean_text(text: Optional[str]) -> str:
     text = re.sub(r"\s+", ' ', text).strip()
     return text
 
+def cleaner(text: Optional[str]) -> str:
+    """
+    Uses the package clean-text to customise and clean input as per parameters
+    """
+    return clean(
+        text,
+        fix_unicode=True,
+        to_ascii=True,
+        lower=False,
+        no_line_breaks=False,
+        no_urls=True,
+        no_emails=True,
+        no_phone_numbers=True,
+        no_numbers=False,
+        no_digits=False,
+        no_currency_symbols=False,
+        no_punct=False,
+        replace_with_url="<URL>",
+        replace_with_email="<EMAIL>",
+        replace_with_phone_number="<PHONE>",
+        lang="en",
+    )
 
 def preprocess_dataframe(df: pd.DataFrame, text_columns: List[str], label_column: Optional[str] = None) -> pd.DataFrame:
     """
@@ -22,7 +45,7 @@ def preprocess_dataframe(df: pd.DataFrame, text_columns: List[str], label_column
     """
     # Clean only columns that exist
     for col in [c for c in text_columns if c in df.columns]:
-        df[col] = df[col].astype(str).apply(clean_text)
+        df[col] = df[col].astype(str).apply(cleaner)
 
     # Drop rows with missing `rule_violation` value
     if label_column and label_column in df.columns:
