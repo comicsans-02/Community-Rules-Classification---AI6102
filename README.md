@@ -2,6 +2,13 @@
 
 A project that uses different ML and DL algorithms to determine whether a comment violates a particular Reddit community guideline.
 
+## Key Files
+
+- Data: ```data/raw/train.csv```, ```data/raw/test.csv```
+- Processed: ```data/processed/train_cleaned.csv``` (already generated)
+- Trained Model: ```notebooks/fasttext_baseline.bin``` (already trained)
+- Source Modules: ```src/preprocessing.py```, ```src/eval.py```, ```src/models/fasttext.py```
+
 ## Algorithms Used
   
 #### Virtual Environment Created
