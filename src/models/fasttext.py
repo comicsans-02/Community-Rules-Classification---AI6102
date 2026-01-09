@@ -14,25 +14,41 @@ def write_fasttext_file(df, text_col="combined_text", label_col="rule_violation"
             f.write(f"__label__{label} {text}\n")
 
 def fasttext_predict(model, texts):
-    """
-    Returns prediction probabilities using the trained Fasttext model.
-    """
-    probs = []
     preds = []
+    probs = []
 
     for text in texts:
+        # Skip empty text
+        if not isinstance(text, str) or text.strip() == "":
+            preds.append(0)
+            probs.append(0.0)
+            continue
+
+        # Safe call to FastText
         labels, p = model.predict(text, k=1)
 
-        label_str = labels[0]
-        prob = p[0]
+        # Convert tuple → list
+        labels = list(labels) if labels is not None else []
 
-        # predicted class
-        pred = 1 if label_str == "__label__positive" else 0
+        labels = np.asarray(labels) if labels is not None else np.asarray([])
+        p = np.asarray(p) if p is not None else np.asarray([])
 
-        # probability of class "1"
-        prob_class1 = prob if pred == 1 else (1 - prob)
+        # Handle missing predictions
+        if len(labels) == 0 or len(p) == 0:
+            preds.append(0)
+            probs.append(0.0)
+            continue
+
+        fasttext_label = labels[0]   # "__label__1", "__label__0"
+        prob = float(p[0])
+
+        # convert FastText label → 0/1
+        pred = 1 if "__label__1" in fasttext_label else 0
+        
+        # probability of class 1
+        prob_class1 = prob if pred == 1 else 1 - prob
 
         preds.append(pred)
         probs.append(prob_class1)
 
-    return np.array(preds), np.array(probs)
+    return np.asarray(preds), np.asarray(probs)

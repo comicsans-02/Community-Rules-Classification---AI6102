@@ -1,0 +1,18 @@
+# Core dependencies
+numpy<2.0
+pandas
+matplotlib
+seaborn
+
+# ML/NLP
+scikit-learn
+fasttext
+clean-text[gpl]
+
+# Deep Learning (for transformer notebooks)
+torch
+transformers
+
+# Jupyter support
+jupyter
+ipykernel
